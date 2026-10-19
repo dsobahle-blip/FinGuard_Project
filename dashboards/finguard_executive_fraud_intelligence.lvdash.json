@@ -1,0 +1,975 @@
+{
+  "datasets": [
+    {
+      "name": "customer_risk_summary",
+      "displayName": "Customer Risk Summary",
+      "config": {
+        "version": "1.1",
+        "source": "finguard.gold.gold_customer_risk_summary",
+        "measures": [
+          {
+            "name": "txn_count",
+            "expr": "SUM(`txn_count`)",
+            "comment": "Transaction count per customer"
+          },
+          {
+            "name": "total_amount",
+            "expr": "SUM(`total_amount`)",
+            "comment": "Total amount transacted"
+          },
+          {
+            "name": "max_amount",
+            "expr": "MAX(`max_amount`)",
+            "comment": "Max single transaction amount"
+          },
+          {
+            "name": "velocity_flagged_customers",
+            "expr": "SUM(CAST(`is_velocity_flag` AS BIGINT))",
+            "comment": "Count of velocity-flagged customers"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "window_start",
+            "expr": "window_start",
+            "comment": "Window start timestamp"
+          },
+          {
+            "name": "window_end",
+            "expr": "window_end",
+            "comment": "Window end timestamp"
+          },
+          {
+            "name": "customer_id",
+            "expr": "customer_id",
+            "comment": "Customer unique ID"
+          }
+        ]
+      }
+    },
+    {
+      "name": "fraud_rate_summary",
+      "displayName": "Fraud Rate Summary",
+      "config": {
+        "version": "1.1",
+        "source": "finguard.gold.gold_hourly_fraud_rate",
+        "measures": [
+          {
+            "name": "flagged_transactions",
+            "expr": "SUM(`flagged_transactions`)",
+            "comment": "Total flagged fraud transactions"
+          },
+          {
+            "name": "total_transactions",
+            "expr": "SUM(`total_transactions`)",
+            "comment": "Total transactions"
+          },
+          {
+            "name": "fraud_rate",
+            "expr": "SUM(`flagged_transactions`) / NULLIF(SUM(`total_transactions`), 0)",
+            "comment": "Fraud rate: flagged / total"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "window_start",
+            "expr": "window_start",
+            "comment": "Window start timestamp"
+          },
+          {
+            "name": "window_end",
+            "expr": "window_end",
+            "comment": "Window end timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "name": "fraud_summary_by_merchant",
+      "displayName": "Fraud Summary by Merchant",
+      "config": {
+        "version": "1.1",
+        "source": "finguard.gold.gold_fraud_summary",
+        "measures": [
+          {
+            "name": "flagged_count",
+            "expr": "SUM(`flagged_count`)",
+            "comment": "Total fraud flagged count"
+          },
+          {
+            "name": "flagged_amount",
+            "expr": "SUM(`flagged_amount`)",
+            "comment": "Total fraud flagged amount"
+          },
+          {
+            "name": "high_severity_count",
+            "expr": "SUM(`high_severity_count`)",
+            "comment": "High severity fraud count"
+          },
+          {
+            "name": "medium_severity_count",
+            "expr": "SUM(`medium_severity_count`)",
+            "comment": "Medium severity fraud count"
+          },
+          {
+            "name": "low_severity_count",
+            "expr": "SUM(`low_severity_count`)",
+            "comment": "Low severity fraud count"
+          },
+          {
+            "name": "avg_risk_score",
+            "expr": "AVG(`avg_risk_score`)",
+            "comment": "Average risk score"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "window_start",
+            "expr": "window_start",
+            "comment": "Window start timestamp"
+          },
+          {
+            "name": "window_end",
+            "expr": "window_end",
+            "comment": "Window end timestamp"
+          },
+          {
+            "name": "merchant_category",
+            "expr": "merchant_category",
+            "comment": "Merchant category"
+          }
+        ]
+      }
+    },
+    {
+      "name": "active_fraud_watchlist",
+      "displayName": "Active Fraud Watchlist",
+      "config": {
+        "version": "1.1",
+        "source": "finguard.silver.silver_fraud_watchlist",
+        "measures": [
+          {
+            "name": "entity_count",
+            "expr": "COUNT(`entity_id`)",
+            "comment": "Total watchlist entities"
+          },
+          {
+            "name": "active_count",
+            "expr": "SUM(CAST(`is_active` AS BIGINT))",
+            "comment": "Active flagged entities"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "entity_id",
+            "expr": "entity_id",
+            "comment": "Entity unique ID"
+          },
+          {
+            "name": "entity_name",
+            "expr": "entity_name",
+            "comment": "Entity name"
+          },
+          {
+            "name": "entity_type",
+            "expr": "entity_type",
+            "comment": "Entity type"
+          },
+          {
+            "name": "flagged_date",
+            "expr": "flagged_date",
+            "comment": "Date flagged"
+          },
+          {
+            "name": "reason",
+            "expr": "reason",
+            "comment": "Flagging reason"
+          },
+          {
+            "name": "severity",
+            "expr": "severity",
+            "comment": "Risk severity"
+          },
+          {
+            "name": "source",
+            "expr": "source",
+            "comment": "Source system"
+          }
+        ]
+      }
+    }
+  ],
+  "pages": [
+    {
+      "name": "b971bc76",
+      "displayName": "Page 1",
+      "layout": [
+        {
+          "widget": {
+            "name": "header_title",
+            "multilineTextboxSpec": {
+              "lines": [
+                "# FinGuard Executive Fraud Intelligence"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "counter_flagged_txn",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "fraud_rate_summary",
+                  "fields": [
+                    {
+                      "name": "measure(flagged_transactions)",
+                      "expression": "MEASURE(`flagged_transactions`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Flagged Transactions"
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(flagged_transactions)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 1,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "counter_fraud_rate",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "fraud_rate_summary",
+                  "fields": [
+                    {
+                      "name": "measure(fraud_rate)",
+                      "expression": "MEASURE(`fraud_rate`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Fraud Rate"
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(fraud_rate)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 1,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "counter_high_severity",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "fraud_summary_by_merchant",
+                  "fields": [
+                    {
+                      "name": "measure(high_severity_count)",
+                      "expression": "MEASURE(`high_severity_count`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "High Severity Fraud"
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(high_severity_count)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 1,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "counter_active_watchlist",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "active_fraud_watchlist",
+                  "fields": [
+                    {
+                      "name": "measure(active_count)",
+                      "expression": "MEASURE(`active_count`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Active Watchlist"
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(active_count)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 1,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "line_fraud_trend",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "fraud_rate_summary",
+                  "fields": [
+                    {
+                      "name": "hourly(window_start)",
+                      "expression": "DATE_TRUNC(\"HOUR\", `window_start`)"
+                    },
+                    {
+                      "name": "measure(fraud_rate)",
+                      "expression": "MEASURE(`fraud_rate`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Fraud Rate Trend"
+              },
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "hourly(window_start)",
+                  "displayName": "Hour",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(fraud_rate)",
+                  "displayName": "fraud_rate",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 3,
+            "width": 8,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "bar_fraud_by_merchant",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "fraud_summary_by_merchant",
+                  "fields": [
+                    {
+                      "name": "merchant_category",
+                      "expression": "`merchant_category`"
+                    },
+                    {
+                      "name": "measure(flagged_count)",
+                      "expression": "MEASURE(`flagged_count`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Fraud Count by Merchant Category"
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "merchant_category",
+                  "displayName": "merchant_category",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(flagged_count)",
+                  "displayName": "flagged_count",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "merchant_category",
+                  "displayName": "merchant_category",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 3,
+            "width": 4,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "bar_flagged_amount",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "fraud_summary_by_merchant",
+                  "fields": [
+                    {
+                      "name": "merchant_category",
+                      "expression": "`merchant_category`"
+                    },
+                    {
+                      "name": "measure(flagged_amount)",
+                      "expression": "MEASURE(`flagged_amount`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Flagged Amount by Category"
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "merchant_category",
+                  "displayName": "merchant_category",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(flagged_amount)",
+                  "displayName": "flagged_amount",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "merchant_category",
+                  "displayName": "merchant_category",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 8,
+            "width": 4,
+            "height": 4
+          }
+        },
+        {
+          "widget": {
+            "name": "table_high_risk_customers",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "customer_risk_summary",
+                  "fields": [
+                    {
+                      "name": "customer_id",
+                      "expression": "`customer_id`"
+                    },
+                    {
+                      "name": "measure(txn_count)",
+                      "expression": "MEASURE(`txn_count`)"
+                    },
+                    {
+                      "name": "measure(total_amount)",
+                      "expression": "MEASURE(`total_amount`)"
+                    },
+                    {
+                      "name": "measure(max_amount)",
+                      "expression": "MEASURE(`max_amount`)"
+                    },
+                    {
+                      "name": "measure(velocity_flagged_customers)",
+                      "expression": "MEASURE(`velocity_flagged_customers`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "High-Risk Customers"
+              },
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "customer_id"
+                  },
+                  {
+                    "fieldName": "measure(txn_count)"
+                  },
+                  {
+                    "fieldName": "measure(total_amount)"
+                  },
+                  {
+                    "fieldName": "measure(max_amount)"
+                  },
+                  {
+                    "fieldName": "measure(velocity_flagged_customers)"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 8,
+            "width": 8,
+            "height": 4
+          }
+        },
+        {
+          "widget": {
+            "name": "table_watchlist",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "active_fraud_watchlist",
+                  "fields": [
+                    {
+                      "name": "entity_name",
+                      "expression": "`entity_name`"
+                    },
+                    {
+                      "name": "entity_type",
+                      "expression": "`entity_type`"
+                    },
+                    {
+                      "name": "severity",
+                      "expression": "`severity`"
+                    },
+                    {
+                      "name": "reason",
+                      "expression": "`reason`"
+                    },
+                    {
+                      "name": "source",
+                      "expression": "`source`"
+                    },
+                    {
+                      "name": "flagged_date",
+                      "expression": "`flagged_date`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Active Fraud Watchlist"
+              },
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "entity_name"
+                  },
+                  {
+                    "fieldName": "entity_type"
+                  },
+                  {
+                    "fieldName": "severity"
+                  },
+                  {
+                    "fieldName": "reason"
+                  },
+                  {
+                    "fieldName": "source"
+                  },
+                  {
+                    "fieldName": "flagged_date"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 12,
+            "width": 12,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "bar_severity_breakdown",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "fraud_summary_by_merchant",
+                  "fields": [
+                    {
+                      "name": "merchant_category",
+                      "expression": "`merchant_category`"
+                    },
+                    {
+                      "name": "measure(high_severity_count)",
+                      "expression": "MEASURE(`high_severity_count`)"
+                    },
+                    {
+                      "name": "measure(medium_severity_count)",
+                      "expression": "MEASURE(`medium_severity_count`)"
+                    },
+                    {
+                      "name": "measure(low_severity_count)",
+                      "expression": "MEASURE(`low_severity_count`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Severity Breakdown by Merchant"
+              },
+              "version": 3,
+              "mark": {
+                "layout": "stack"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "merchant_category",
+                  "displayName": "Merchant Category",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fields": [
+                    {
+                      "fieldName": "measure(high_severity_count)",
+                      "displayName": "High Severity"
+                    },
+                    {
+                      "fieldName": "measure(medium_severity_count)",
+                      "displayName": "Medium Severity"
+                    },
+                    {
+                      "fieldName": "measure(low_severity_count)",
+                      "displayName": "Low Severity"
+                    }
+                  ],
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 17,
+            "width": 12,
+            "height": 5
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "global_filters",
+      "displayName": "Global Filters",
+      "layout": [
+        {
+          "widget": {
+            "name": "date_range_filter",
+            "queries": [
+              {
+                "name": "dashboards/01f1c8e872f51f9f8d2aaff537f17c74/datasets/01f1ca570c9714a9ba0332c4fb94d37d_window_start",
+                "query": {
+                  "datasetName": "fraud_rate_summary",
+                  "fields": [
+                    {
+                      "name": "window_start",
+                      "expression": "`window_start`"
+                    },
+                    {
+                      "name": "window_start_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01f1c8e872f51f9f8d2aaff537f17c74/datasets/01f1ca570c701a26b14c8d040259b8de_window_start",
+                "query": {
+                  "datasetName": "customer_risk_summary",
+                  "fields": [
+                    {
+                      "name": "window_start",
+                      "expression": "`window_start`"
+                    },
+                    {
+                      "name": "window_start_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01f1c8e872f51f9f8d2aaff537f17c74/datasets/01f1ca570cc4121cb4fd3fe2c61d8aa5_window_start",
+                "query": {
+                  "datasetName": "fraud_summary_by_merchant",
+                  "fields": [
+                    {
+                      "name": "window_start",
+                      "expression": "`window_start`"
+                    },
+                    {
+                      "name": "window_start_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01f1c8e872f51f9f8d2aaff537f17c74/datasets/01f1ca570ede17219bf1a929732d78e0_flagged_date",
+                "query": {
+                  "datasetName": "active_fraud_watchlist",
+                  "fields": [
+                    {
+                      "name": "flagged_date",
+                      "expression": "`flagged_date`"
+                    },
+                    {
+                      "name": "flagged_date_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Date Range Filter"
+              },
+              "widgetType": "filter-date-range-picker",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "window_start",
+                    "queryName": "dashboards/01f1c8e872f51f9f8d2aaff537f17c74/datasets/01f1ca570c9714a9ba0332c4fb94d37d_window_start"
+                  },
+                  {
+                    "fieldName": "window_start",
+                    "queryName": "dashboards/01f1c8e872f51f9f8d2aaff537f17c74/datasets/01f1ca570c701a26b14c8d040259b8de_window_start"
+                  },
+                  {
+                    "fieldName": "window_start",
+                    "queryName": "dashboards/01f1c8e872f51f9f8d2aaff537f17c74/datasets/01f1ca570cc4121cb4fd3fe2c61d8aa5_window_start"
+                  },
+                  {
+                    "fieldName": "flagged_date",
+                    "queryName": "dashboards/01f1c8e872f51f9f8d2aaff537f17c74/datasets/01f1ca570ede17219bf1a929732d78e0_flagged_date"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 2
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_GLOBAL_FILTERS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "canvasBackgroundColor": {
+        "light": "#EBEBEB",
+        "dark": "#0D1B2A"
+      },
+      "widgetBackgroundColor": {
+        "light": "#FCFCFD",
+        "dark": "#1A1F2E"
+      },
+      "widgetBorderColor": {
+        "light": "#FCFCFD",
+        "dark": "#1A1F2E"
+      },
+      "fontColor": {
+        "light": "#374151",
+        "dark": "#E4E9EE"
+      },
+      "selectionColor": {
+        "light": "#2272B4",
+        "dark": "#2272B4"
+      },
+      "visualizationColors": [
+        "#15AFDD",
+        "#2375A8",
+        "#52A870",
+        "#C85070",
+        "#C89930"
+      ],
+      "widgetHeaderAlignment": "LEFT",
+      "widgetPadding": 12,
+      "widgetMargin": 8,
+      "widgetCornerRadius": 8,
+      "widgetShadow": 10,
+      "fontSettings": {
+        "base": {
+          "fontFamily": "Inter"
+        }
+      }
+    },
+    "applyModeEnabled": false
+  }
+}

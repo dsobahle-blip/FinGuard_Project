@@ -62,6 +62,8 @@ Every transaction is scored against 8 weighted rules; risk ≥ 60 gets flagged:
 │   ├── 06_Postgres_Setup.py            # Supabase/Postgres ingestion + federation
 │   ├── Refresh_bronze_customers_pg_from_Supabase.py # Daily customer refresh job
 │   └── FinGuard_Executive_Presentation.py # Executive summary presentation
+├── dashboards/
+│   └── finguard_executive_fraud_intelligence.lvdash.json  # AI/BI dashboard (importable)
 ├── pipelines/            # Spark Declarative Pipeline transformations
 │   ├── kafka_bronze/     # bronze_transactions (Auto Loader from Kafka)
 │   ├── silver/           # silver_transactions, silver_enriched_transactions
