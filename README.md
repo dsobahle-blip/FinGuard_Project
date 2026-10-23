@@ -60,6 +60,7 @@ Every transaction is scored against 8 weighted rules; risk ≥ 60 gets flagged:
 │   ├── 04_Alert_Pipeline.py            # Gmail SMTP fraud alert dispatch
 │   ├── 05_FinGuard_Architecture_Trace.py # End-to-end architecture walkthrough
 │   ├── 06_Postgres_Setup.py            # Supabase/Postgres ingestion + federation
+│   ├── 07_Kafka_Transaction_Producer.py # Synthetic transaction generator → Kafka
 │   ├── Refresh_bronze_customers_pg_from_Supabase.py # Daily customer refresh job
 │   └── FinGuard_Executive_Presentation.py # Executive summary presentation
 ├── dashboards/
@@ -102,3 +103,7 @@ Every transaction is scored against 8 weighted rules; risk ≥ 60 gets flagged:
 ## Tech Stack
 
 Apache Spark Structured Streaming · Spark Declarative Pipelines (medallion) · Delta Lake on Unity Catalog · Confluent Cloud Kafka · Databricks Workflows · Lakehouse Federation (Supabase PostgreSQL) · Gmail SMTP alerting · AI/BI dashboards
+
+## Auto-Sync
+
+Notebooks in this repository are automatically synced from the Databricks workspace (`/Users/dsobahle@gmail.com/Finguard_Project/`) to the Git folder (`/Workspace/Users/dsobahle@gmail.com/FinGuard_Git/`) and pushed to GitHub on a recurring schedule. The sync copies all 9 notebooks, commits any changes, and pushes to the `main` branch.
