@@ -17,26 +17,6 @@ A scheduled orchestration job keeps the entire pipeline running every 15 minutes
 
 ## Architecture
 
-```
-Confluent Cloud Kafka (credit_card_transactions)
-         │
-         │  Structured Streaming (trigger = availableNow)
-         ▼
-┌──────────────────┐      ┌────────────────────────────────────────┐
-│     BRONZE       │─────▶│               SILVER                   │
-│  Raw events      │      │  Parsed • Validated • Deduplicated     │
-│  + Customers     │      │  Enriched with customer + watchlist    │
-│  + Watchlist     │      └──────────────────┬─────────────────────┘
-└──────────────────┘                         │
-                                             ▼
-┌──────────────────────────────────────────────────────────────────┐
-│                           GOLD LAYER                             │
-│  • 8-rule weighted fraud engine → Risk Score                     │
-│  • Flagged transactions (HIGH / MEDIUM / LOW)                    │
-│  • Merchant, Customer & Hourly fraud analytics                   │
-│  • Alert log → Gmail SMTP notifications                          │
-└──────────────────────────────────────────────────────────────────┘
-```
 
 **Key Components**
 - **Catalog:** `finguard` (schemas: `bronze`, `silver`, `gold`)
@@ -71,29 +51,9 @@ Every transaction is scored against **8 weighted rules**. Risk score ≥ 60 is f
 
 ## Repository Structure
 
-```
-FinGuard_Project/
-├── notebooks/                          # Databricks notebooks (Python)
-│   ├── 01_Kafka_Streaming_Test.py
-│   ├── 02_Setup_Secret_Scope.py
-│   ├── 03_Medallion_Architecture.py
-│   ├── 04_Alert_Pipeline.py
-│   ├── 05_FinGuard_Architecture_Trace.py
-│   ├── 06_Postgres_Setup.py
-│   ├── 07_Kafka_Transaction_Producer.py
-│   ├── Refresh_bronze_customers_pg_from_Supabase.py
-│   └── FinGuard_Executive_Presentation.py
-├── dashboards/
-│   └── finguard_executive_fraud_intelligence.lvdash.json
-├── pipelines/                          # Spark Declarative Pipelines
-│   ├── kafka_bronze/
-│   ├── silver/
-│   ├── customer/
-│   ├── watchlist/
-│   └── gold/                           # 9 gold tables
-└── docs/
-    └── FinGuard_E2E_Project_Prompt.md
-```
+
+
+
 
 ---
 
@@ -147,4 +107,3 @@ Advanced Data Analyst | Data Engineering | Microsoft Fabric & Databricks
 ---
 
 ⭐ If you find this project useful, consider giving it a star!
-```
