@@ -1,6 +1,3 @@
- **README.md**.  
-
-```markdown
 # FinGuard — Real-Time Credit Card Fraud Detection
 
 **Real-time credit card fraud detection pipeline on Databricks**  
