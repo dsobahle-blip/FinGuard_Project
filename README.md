@@ -1,6 +1,4 @@
-Here is the **complete and final README.md**.  
-
-Copy everything from the first line to the last line below and paste it into your GitHub README:
+ **README.md**.  
 
 ```markdown
 # FinGuard — Real-Time Credit Card Fraud Detection
