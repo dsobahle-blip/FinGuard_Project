@@ -1,4 +1,18 @@
-# FinGuard — Real-Time Credit Card Fraud Detection
+## 🚀 Project Status: Live
+
+**FinGuard is a live, continuously evolving fraud detection and intelligence project** built to demonstrate the end-to-end processing of transaction events, risk scoring, suspicious-transaction detection, alerting, and executive reporting.
+
+The platform integrates streaming data ingestion, data engineering, rule-based fraud-risk analysis, data quality controls, and analytical reporting through a Databricks-centered architecture.
+
+**Current operational capabilities include:**
+- Kafka-based transaction ingestion.
+- Bronze, Silver, and Gold data processing.
+- Rule-based transaction risk scoring and suspicious-transaction flagging.
+- Customer-risk and watchlist integration.
+- Fraud alert logging and email alerting.
+- Gold-layer analytical tables and executive dashboarding.
+
+*Project status reflects ongoing operation and development. Flagged transactions represent risk indicators and should not be interpreted as confirmed fraud without independent verification.*# FinGuard — Real-Time Credit Card Fraud Detection
 
 **Real-time credit card fraud detection pipeline on Databricks**  
 Kafka streaming → Medallion Architecture → Multi-rule risk scoring → Automated alerts + AI/BI dashboards
