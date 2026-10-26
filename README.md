@@ -159,5 +159,3 @@ Advanced Data Analyst | Data Engineering | Microsoft Fabric & Databricks
 [LinkedIn](https://www.linkedin.com/in/dumisani-sobahle-81aa48144)
 
 ---
-
-⭐ If you find this project useful, consider giving it a sta
